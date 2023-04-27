@@ -10,7 +10,7 @@ module stimulus ();
 
     initial begin
         $dumpfile("output_wave.vcd");
-        $dumpvars(0,stimulus);
+        $dumpvars(0, stimulus);
     end
 
     initial begin

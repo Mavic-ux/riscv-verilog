@@ -10,9 +10,9 @@ reg [31:0] PC = 32'b0;
     always @(posedge clock, posedge reset)
     begin
         if(reset == 1)  
-        PC <= 0;
+            PC <= 0;
         else
-        PC <= PC+4;   
+            PC <= PC + 4;   
     end
 
 endmodule
