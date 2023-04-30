@@ -3,9 +3,12 @@ project(riscv-verilog)
 
 find_package(verilator HINTS $ENV{VERILATOR_ROOT})
 
-add_executable(sim main.cpp)
+set(TARGET sim)
+add_executable(${TARGET} main.cpp)
 
-verilate(sim SOURCES cpu.v VERILATOR_ARGS --trace)
+verilate(${TARGET} SOURCES top.v VERILATOR_ARGS --trace)
 
-target_include_directories(sim PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../CLI11)
-target_include_directories(sim PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ELFIO)
+message(CMAKE_CURRENT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
+target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../CLI11/include)
+target_include_directories(${TARGET} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ELFIO)
