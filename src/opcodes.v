@@ -8,3 +8,4 @@
 `define OPC_LUI 7'b0110111
 `define OPC_AUIPC 7'b0010111
 `define OPC_SYSTEM 7'b1110011
+`define ZERO 7'b0000000

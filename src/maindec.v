@@ -96,6 +96,19 @@ module maindec(
                 jumpsrc = 0;
                 alusrc_a_zero = 0;
             end
+            `ZERO: begin
+                alusrcA = 2'bxx;
+                alusrcB = 2'bxx;
+                memwrite = 0;
+                memsize = 3'bxxx;
+                memtoreg = 0;
+                branch = 0;
+                regwrite = 0;
+                jump = 0;
+                jumpsrc = 0;
+                alusrc_a_zero = 0;
+                hlt = 1;
+            end
             default: begin
                 hlt = 1;
                 alusrcA = 2'bxx;
@@ -108,7 +121,7 @@ module maindec(
                 jump = 0;
                 jumpsrc = 0;
                 alusrc_a_zero = 0;
-                $display("Unknown istruction : %h", op);
+                $display("Unknown istruction : %4h", op);
                 $finish;
             end
         endcase
