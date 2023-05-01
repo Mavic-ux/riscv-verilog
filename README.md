@@ -1,1 +1,1 @@
-## RISC-V cpu implementation on verilog
+## RISC-V CPU implementation on verilog
