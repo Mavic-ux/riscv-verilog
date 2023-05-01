@@ -16,6 +16,5 @@ module top (
                  .readdata(readdata));
     imem #(18) imem (.a(pc[19:2]), .rd(instr));
     dmem #(18) dmem (.clk(clk), .we(memwrite),
-                     .memsize(memsize), .a(dataadr),
-                    .wd(writedata), .rd(readdata));
+                     .a(dataadr), .wd(writedata), .rd(readdata));
 endmodule
