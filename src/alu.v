@@ -1,9 +1,9 @@
 `include "aluop.v"
 
 module alu(
-    input [31:0] a, b,
+    input [(`WORD - 1):0] a, b,
     input [3:0] aluctr,
-    output reg [31:0] aluout,
+    output reg [(`WORD - 1):0] aluout,
     output reg iszero
 );
     logic [4:0] shamt = b[4:0];
@@ -21,9 +21,9 @@ module alu(
                 `ALU_XOR:
                     aluout = a ^ b;
                 `ALU_SLTU:
-                    aluout = {{31{1'b0}}, a < b};
+                    aluout = {{(`WORD - 1){1'b0}}, a < b};
                 `ALU_SLT:
-                    aluout = {{31{1'b0}}, $signed(a) < $signed(b)};
+                    aluout = {{(`WORD - 1){1'b0}}, $signed(a) < $signed(b)};
                 `ALU_SLL:
                     aluout = a << shamt;
                 `ALU_SRL:

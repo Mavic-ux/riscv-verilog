@@ -1,10 +1,10 @@
 module cpu (
     input wire clk, reset,
-    output wire[31:0] pc,
-    input wire [31:0] instr,
+    output wire[(`WORD - 1):0] pc,
+    input wire [(`WORD - 1):0] instr,
     output wire memwrite, output wire [2:0] memsize,
-    output wire[31:0] aluout, writedata,
-    input wire[31:0] readdata
+    output wire[(`WORD - 1):0] aluout, writedata,
+    input wire[(`WORD - 1):0] readdata
 );
     wire memtoreg, regwrite, jump;
     wire[1:0] alusrcA, alusrcB;
@@ -15,30 +15,28 @@ module cpu (
     wire [6:0] op, funct7;
     wire [2:0] funct3;
 
-    wire [31:0] pcnext, pcnextbr, pcplus4, pcbranch, jmp_base, jmp_pc, jmp_fin_pc;
-    wire [31:0] imm;
+    wire [(`WORD - 1):0] pcnext, pcnextbr, pcplus4, pcbranch, jmp_base, jmp_pc, jmp_fin_pc;
+    wire [(`WORD - 1):0] imm;
     wire [4:0] ra1;
-    wire [31:0] rd1;
-    wire [31:0] srca, srcb;
-    wire [31:0] result;
+    wire [(`WORD - 1):0] rd1;
+    wire [(`WORD - 1):0] srca, srcb;
+    wire [(`WORD - 1):0] result;
 
     assign op = instr[6:0];
-    assign funct7 = instr[31:25];
+    assign funct7 = instr[(`WORD - 1):25];
     assign funct3 = instr[14:12];
 
     wire branch, inv_br;
-    maindec md (.op(op), .funct3(funct3),
+
+    decoder dec (.opcode(op), .funct3(funct3), .funct7(funct7),
                 .memtoreg(memtoreg), .memwrite(memwrite),
-                .memsize(memsize), .branch(branch),
-                .alusrcA(alusrcA), .alusrcB(alusrcB),
+                .branch(branch), .alusrcA(alusrcA), .alusrcB(alusrcB),
                 .alusrc_a_zero(alusrc_a_zero),
+                .alucontrol(alucontrol), .inv_br(inv_br),
                 .regwrite(regwrite), .jump(jump),
                 .jumpsrc(jumpsrc), .hlt(hlt));
-    aludec ad (.opcode(op), .funct3(funct3),
-               .funct7(funct7), .alucontrol(alucontrol),
-               .inv_br(inv_br));
-    assign pcsrc = branch & (zero ^ inv_br);
 
+    assign pcsrc = branch & (zero ^ inv_br);
 
     always @(posedge clk) begin
         if (hlt)
