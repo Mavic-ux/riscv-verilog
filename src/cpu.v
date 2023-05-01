@@ -48,7 +48,7 @@ module cpu (
 
     assign jmp_base = jumpsrc ? rd1 : pc;
 
-    assign jmp_pc = (jmp_base + imm) & 32'hFFFFFFF;
+    assign jmp_pc = (jmp_base + imm) & 32'hFFFFFFFE;
 
     assign pcnext =  jump ? jmp_pc: pcnextbr;
 
