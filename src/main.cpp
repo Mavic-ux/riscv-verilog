@@ -3,33 +3,12 @@
 #include <verilated_vcd_c.h>
 
 #include "Vtop.h"
-// #include "Vtop___024root.h"
-// #include "Vtop__Dpi.h"
-// #include "Vtop__Syms.h"
-#include "Vtop_regfile.h"
-#include "Vtop_imem.h"
 #include "Vtop_top.h"
-#include "Vtop_cpu.h"
+#include "Vtop_instrmem__P12.h"
 
-
-#include <array>
 #include <iostream>
 #include <stdlib.h>
 
-// void RegfileStr(const uint32_t *registers) {
-//   std::cout << std::setfill('0');
-//   constexpr std::size_t lineNum = 8;
-
-//   for (std::size_t i = 0; i < lineNum; ++i) {
-//     for (std::size_t j = 0; j < 32 / lineNum; ++j) {
-//       auto regIdx = j * lineNum + i;
-//       auto &reg = registers[regIdx];
-//       std::cout << "  [" << std::dec << std::setw(2) << regIdx << "] ";
-//       std::cout << "0x" << std::hex << std::setw(sizeof(reg) * 2) << reg;
-//     }
-//     std::cout << std::endl;
-//   }
-// }
 
 int main(int argc, char **argv) {
   Verilated::commandArgs(argc, argv);
@@ -47,9 +26,6 @@ int main(int argc, char **argv) {
   
   for (size_t seg_i = 0; seg_i < seg_num; ++seg_i) {
     const ELFIO::segment *segment = m_reader.segments[seg_i];
-    if (segment->get_type() != ELFIO::PT_LOAD) {
-      continue;
-    }
     uint32_t address = segment->get_virtual_address();
 
     size_t filesz = static_cast<size_t>(segment->get_file_size());
@@ -59,7 +35,7 @@ int main(int argc, char **argv) {
       const auto *begin =
           reinterpret_cast<const uint8_t *>(segment->get_data());
       uint8_t *dst =
-          reinterpret_cast<uint8_t *>(top_module->top->imem->RAM);
+          reinterpret_cast<uint8_t *>(top_module->top->instrmem->buffer);
       std::copy(begin, begin + filesz, dst + address);
     }
   }

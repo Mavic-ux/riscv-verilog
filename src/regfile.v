@@ -1,19 +1,19 @@
 module regfile(
     input clk,
-    input [4:0] ra1, ra2,
-    input we3,
-    input [4:0] wa3,
-    input [31:0] wd3,
-    output [31:0] rd1, rd2
+    input [4:0] rn1, rn2,
+    input we,
+    input [4:0] wn,
+    input [(`WORD - 1):0] wd,
+    output [(`WORD - 1):0] rd1, rd2
 );
-    reg [31:0] registers [31:0];
+    reg [(`WORD - 1):0] registers [(`WORD - 1):0];
 
-    assign rd1 = (ra1 != 0) ? registers[ra1] : 0;
-    assign rd2 = (ra2 != 0) ? registers[ra2] : 0;
+    assign rd1 = (rn1 != 0) ? registers[rn1] : 0;
+    assign rd2 = (rn2 != 0) ? registers[rn2] : 0;
 
     always @ (negedge clk) begin
-        if (we3) begin 
-            registers[wa3] <= wd3;
+        if (we) begin 
+            registers[wn] <= wd;
         end
         
         for (integer i = 0; i < `WORD; i = i + 2) begin
