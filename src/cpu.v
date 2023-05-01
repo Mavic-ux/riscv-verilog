@@ -2,7 +2,7 @@ module cpu (
     input wire clk, reset,
     output wire[(`WORD - 1):0] pc,
     input wire [(`WORD - 1):0] instr,
-    output wire memwrite, output wire [2:0] memsize,
+    output wire memwrite,
     output wire[(`WORD - 1):0] aluout, writedata,
     input wire[(`WORD - 1):0] readdata
 );
@@ -26,7 +26,7 @@ module cpu (
     assign funct7 = instr[(`WORD - 1):25];
     assign funct3 = instr[14:12];
 
-    wire branch, inv_br;
+    wire branch, inv_br;       
 
     decoder dec (.opcode(op), .funct3(funct3), .funct7(funct7),
                 .memtoreg(memtoreg), .memwrite(memwrite),
@@ -46,19 +46,23 @@ module cpu (
     end
 
     flopr #(32) pcreg(.clk(clk), .reset(reset), .d(pcnext), .q(pc));
-    adder pcadd1(.a(pc), .b(32'd4), .y(pcplus4));
-    adder pcadd2(.a(pc), .b(imm), .y(pcbranch));
+
+    assign pcplus4 = pc + 32'd4;
+
+    assign pcbranch = pc + imm;
 
     assign pcnextbr = pcsrc ? pcbranch : pcplus4;
 
     assign jmp_base = jumpsrc ? rd1 : pc;
 
-    adder jmptar(.a(jmp_base), .b(imm), .y(jmp_pc));
+    assign jmp_pc = jmp_base + imm;
+
     assign jmp_fin_pc = jmp_pc & ~1;
 
-    mux2 #(32) pcmux(.d0(pcnextbr), .d1(jmp_fin_pc), .s(jump), .y(pcnext));
+    assign pcnext =  jump ? jmp_fin_pc : pcnextbr;
 
     immSel immsel(.instr(instr), .imm(imm));
+
     assign ra1 = instr[19:15] & ~{5{alusrc_a_zero}};
     regfile rf(.clk(clk), .ra1(ra1),
                .ra2(instr[24:20]),
@@ -66,18 +70,11 @@ module cpu (
                .wd3(result),
                .rd1(rd1), .rd2(writedata)); 
 
+    assign result = memtoreg ? readdata : aluout;
 
-    mux2 #(32) resmux(.d0(aluout), .d1(readdata),
-                      .s(memtoreg), .y(result));
+    assign srca = alusrcA[0] ? pc : rd1;
 
-    mux2 #(32) srcamux(.d0(rd1), .d1(pc),
-                       .s(alusrcA[0]), .y(srca));
-
-
-    mux3 #(32) srcbmux(.d0(writedata), .d1(imm),
-                       .d2(32'd4),
-                       .s(alusrcB), .y(srcb));
-                
+    assign srcb = (alusrcB == 0) ? writedata : (alusrcB == 1) ? imm : 32'd4;
 
     alu alu(.a(srca), .b(srcb),
             .aluctr(alucontrol), .aluout(aluout),
