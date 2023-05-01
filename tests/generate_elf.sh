@@ -1,0 +1,1 @@
+~/riscv-embecosm/riscv32-embecosm-gcc-ubuntu2204-20221030/bin/riscv32-unknown-elf-gcc -march=rv32i -e main $1.cc -o $1.out -O0
