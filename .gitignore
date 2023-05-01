@@ -3,5 +3,3 @@
 src/build
 src/*cmake
 src/*vcd
-
-tests/
