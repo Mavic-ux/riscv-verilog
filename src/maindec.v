@@ -108,7 +108,7 @@ module maindec(
                 jump = 0;
                 jumpsrc = 0;
                 alusrc_a_zero = 0;
-                $display("UNHANDLED INST");
+                $display("Unknown istruction : %h", op);
                 $finish;
             end
         endcase

@@ -44,13 +44,12 @@ module datapath (
                .ra2(instr[24:20]),
                .we3(regwrite), .wa3(instr[11:7]),
                .wd3(result),
-               .rd1(rd1), .rd2(writedata));
+               .rd1(rd1), .rd2(writedata)); 
 
 
     mux2 #(32) resmux(.d0(aluout), .d1(readdata),
                       .s(memtoreg), .y(result));
 
-    // ALU logic
     mux2 #(32) srcamux(.d0(rd1), .d1(pc),
                        .s(alusrcA[0]), .y(srca));
 
@@ -64,7 +63,4 @@ module datapath (
             .aluctr(alucontrol), .aluout(aluout),
             .iszero(zero));
 
-    wire _unused_ok = &{1'b0,
-                        alusrcA,
-                        1'b0};
 endmodule

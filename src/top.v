@@ -9,7 +9,7 @@ module top (
     logic [31:0] instr, readdata;
     logic [2:0] memsize;
     
-    riscv riscv (.clk(clk), .reset(reset),
+    cpu cpu (.clk(clk), .reset(reset),
                  .pc(pc), .instr(instr),
                  .memwrite(memwrite), .memsize(memsize),
                  .aluout(dataadr), .writedata(writedata),
