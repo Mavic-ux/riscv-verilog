@@ -1,38 +1,28 @@
-`include "aluop.v"
-
-module alu(
-    input [(`WORD - 1):0] a, b,
-    input [3:0] aluctr,
-    output reg [(`WORD - 1):0] aluout,
-    output reg iszero
+module alu (
+  input [31:0] src1,
+  input [31:0] src2,
+  input [3:0] alu_op,
+  output reg [31:0] result,
+  output reg zero
 );
-    logic [4:0] shamt = b[4:0];
-    always_latch 
-        begin
-            case (aluctr)
-                `ALU_ADD:
-                    aluout = a + b;
-                `ALU_SUB:
-                    aluout = a - b;
-                `ALU_AND:
-                    aluout = a & b;
-                `ALU_OR:
-                    aluout = a | b;
-                `ALU_XOR:
-                    aluout = a ^ b;
-                `ALU_SLTU:
-                    aluout = {{(`WORD - 1){1'b0}}, a < b};
-                `ALU_SLT:
-                    aluout = {{(`WORD - 1){1'b0}}, $signed(a) < $signed(b)};
-                `ALU_SLL:
-                    aluout = a << shamt;
-                `ALU_SRL:
-                    aluout = a >> shamt;
-                `ALU_SRA:
-                    aluout = $signed(a) >>> shamt;
-                default:
-                    ;
-            endcase
-            iszero = (aluout == 0);
-        end
+
+  always @ (src1, src2, alu_op) begin
+    case (alu_op)
+      `ALU_ADD: result = src1 + src2;
+      `ALU_SLL: result = src1 << src2[4:0];
+      `ALU_SRL: result = src1 >> src2[4:0]; 
+      `ALU_XOR: result = src1 ^ src2; 
+      `ALU_OR :  result = src1 | src2; 
+      `ALU_AND: result = src1 & src2; 
+      `ALU_SUB: result = src1 - src2; 
+      `ALU_SLT: result = (src1 < src2) ? 32'b1 : 32'b0; 
+      default:  result = 32'b0;
+    endcase
+    
+    if (result == 0) begin
+      zero = 1;
+    end else begin
+      zero = 0;
+    end
+  end
 endmodule
